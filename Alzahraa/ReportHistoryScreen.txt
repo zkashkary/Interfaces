@@ -1,0 +1,234 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+
+void main() {
+  runApp(const MyApp());
+}
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      title: 'Report History',
+      localizationsDelegates: const [
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      supportedLocales: const [
+        Locale('ar', 'SA'), // Arabic
+      ],
+      locale: const Locale('ar', 'SA'),
+      theme: ThemeData(
+        fontFamily: 'Roboto',
+      ),
+      home: ReportHistoryScreen(),
+    );
+  }
+}
+
+class ReportHistoryScreen extends StatelessWidget {
+  ReportHistoryScreen({super.key});
+
+  // Add or remove items here UI will update the count automatically.
+  final List<Map<String, dynamic>> _reports = [
+    {
+      'title': 'إضاءة معطلة في القاعة',
+      'location': 'مبنى العلوم - 209',
+      'subLocation': 'الطابق الثاني، الغرفة 204',
+      'status': 'قيد المعالجة',
+      'statusColor': const Color(0xFFFFA000), // Orange
+      'category': 'كهرباء',
+      'date': '٢ فبراير ٢٠٢٦',
+      'icon': Icons.bolt_outlined,
+    },
+    {
+      'title': 'المكيف لا يعمل',
+      'location': 'مبنى المكتبة - 203',
+      'subLocation': 'الطابق الأول، قاعة الدراسة',
+      'status': 'تم الإصلاح',
+      'statusColor': const Color(0xFF4CAF50), // Green
+      'category': 'تكييف',
+      'date': '٣٠ يناير ٢٠٢٦',
+      'icon': Icons.ac_unit_outlined,
+    },
+    // You can add a 3rd item here to test!
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: const Color(0xFFE8F0F5),
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        elevation: 0,
+        centerTitle: true,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Color(0xFF004A8F)),
+          onPressed: () => Navigator.of(context).maybePop(),
+        ),
+        title: const Text(
+          'إجمالي البلاغات',
+          style: TextStyle(
+            color: Color(0xFF004A8F),
+            fontWeight: FontWeight.bold,
+            fontSize: 18,
+          ),
+        ),
+      ),
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Report Count Label
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+            child: Text(
+              // 2. DYNAMIC COUNT: Uses the length of the list
+              '${_reports.length} بلاغ',
+              style: const TextStyle(color: Colors.grey, fontSize: 14),
+            ),
+          ),
+
+          // Scrollable List
+          Expanded(
+            // 3. LIST BUILDER: Automatically builds cards for every item in _reports
+            child: ListView.builder(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              itemCount: _reports.length,
+              itemBuilder: (context, index) {
+                final report = _reports[index];
+                return _buildReportCard(
+                  title: report['title'],
+                  location: report['location'],
+                  subLocation: report['subLocation'],
+                  status: report['status'],
+                  statusColor: report['statusColor'],
+                  category: report['category'],
+                  date: report['date'],
+                  icon: report['icon'],
+                );
+              },
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildReportCard({
+    required String title,
+    required String location,
+    required String subLocation,
+    required String status,
+    required Color statusColor,
+    required String category,
+    required String date,
+    required IconData icon,
+  }) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 16),
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.03),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(icon, color: const Color(0xFF004A8F), size: 28),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Text(
+                  title,
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                    color: Color(0xFF333333),
+                  ),
+                ),
+              ),
+              Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 10,
+                  vertical: 4,
+                ),
+                decoration: BoxDecoration(
+                  color: statusColor,
+                  borderRadius: BorderRadius.circular(6),
+                ),
+                child: Text(
+                  status,
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 12,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          Row(
+            children: [
+              const Icon(
+                Icons.location_on_outlined,
+                size: 16,
+                color: Colors.grey,
+              ),
+              const SizedBox(width: 4),
+              Text(
+                location,
+                style: const TextStyle(color: Colors.grey, fontSize: 13),
+              ),
+            ],
+          ),
+          const SizedBox(height: 4),
+          Row(
+            children: [
+              const Icon(
+                Icons.apartment_outlined,
+                size: 16,
+                color: Colors.grey,
+              ),
+              const SizedBox(width: 4),
+              Text(
+                subLocation,
+                style: const TextStyle(color: Colors.grey, fontSize: 13),
+              ),
+            ],
+          ),
+          const Divider(height: 30, thickness: 0.8),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                category,
+                style: const TextStyle(
+                  color: Color(0xFF007AFF),
+                  fontWeight: FontWeight.bold,
+                  fontSize: 14,
+                ),
+              ),
+              Text(
+                date,
+                style: const TextStyle(color: Colors.grey, fontSize: 12),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
