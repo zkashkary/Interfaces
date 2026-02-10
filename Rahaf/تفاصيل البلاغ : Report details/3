@@ -1,0 +1,57 @@
+import 'package:flutter/material.dart';
+import 'package:graduation_project/report_status.dart';
+
+void main() {
+  runApp(const MyApp());
+}
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  // This widget is the root of your application.
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      home: const Report_Details(),
+    );
+  }
+}
+
+
+import 'package:flutter/material.dart';
+
+class Report_Details extends StatelessWidget {
+  const Report_Details({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Directionality(
+        textDirection: TextDirection.rtl,
+        child: Scaffold(
+          backgroundColor: const Color(0xFFE6F0FA),
+          appBar: AppBar(
+            backgroundColor: Colors.white,
+            elevation: 0.5,
+
+            leading: IconButton(
+              icon: const Icon(Icons.arrow_back, color: Color(0xFF094A8F)),
+              onPressed: () {
+Navigator.pop(context); },
+            ),
+            centerTitle: true,
+            title: const Text(
+              'تفاصيل البلاغ',
+              style: TextStyle(
+                color: Color(0xFF094A8F),
+                fontSize: 28,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
