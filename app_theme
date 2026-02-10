@@ -1,0 +1,110 @@
+import 'package:flutter/material.dart';
+
+class AppColors {
+  static const primary = Color(0xFF094A8F);
+  static const secondary = Color(0xFF2F80ED);
+  static const background = Color(0xFFE6F0FA);
+  static const white = Color(0xFFFFFFFF);
+  static const textPrimary = Color(0xFF1A1A1A);
+  static const textSecondary = Color(0xFF666666);
+  static const textLight = Color(0xFF999999);
+
+  static const processing = Color(0xFFFFA500);
+  static const fixed = Color(0xFF4CAF50);
+  static const pending = Color(0xFF2F80ED);
+
+  static const error = Color(0xFFF44336);
+  static const border = Color(0xFFD0D0D0);
+  static const shadow = Color(0x1A094A8F);
+  static const cardTint = Color(0xFFF2F7FD);
+}
+
+class AppSpacing {
+  static const xs = 4.0;
+  static const sm = 8.0;
+  static const md = 16.0;
+  static const lg = 24.0;
+  static const xl = 32.0;
+  static const xxl = 48.0;
+}
+
+class AppRadius {
+  static const sm = 8.0;
+  static const md = 12.0;
+  static const lg = 16.0;
+  static const xl = 24.0;
+  static const round = 999.0;
+}
+
+class AppText {
+  static const h1 = TextStyle(
+    fontSize: 28,
+    fontWeight: FontWeight.w700,
+    height: 36 / 28,
+  );
+  static const h2 = TextStyle(
+    fontSize: 24,
+    fontWeight: FontWeight.w600,
+    height: 32 / 24,
+  );
+  static const h3 = TextStyle(
+    fontSize: 20,
+    fontWeight: FontWeight.w600,
+    height: 28 / 20,
+  );
+  static const body = TextStyle(
+    fontSize: 16,
+    fontWeight: FontWeight.w400,
+    height: 24 / 16,
+  );
+  static const bodyBold = TextStyle(
+    fontSize: 16,
+    fontWeight: FontWeight.w600,
+    height: 24 / 16,
+  );
+  static const small = TextStyle(
+    fontSize: 14,
+    fontWeight: FontWeight.w400,
+    height: 20 / 14,
+  );
+  static const caption = TextStyle(
+    fontSize: 12,
+    fontWeight: FontWeight.w400,
+    height: 16 / 12,
+  );
+}
+
+class CardShadow {
+  static const small = [
+    BoxShadow(
+      color: AppColors.shadow,
+      offset: Offset(0, 2),
+      blurRadius: 4,
+    ),
+  ];
+  static const medium = [
+    BoxShadow(
+      color: AppColors.shadow,
+      offset: Offset(0, 4),
+      blurRadius: 8,
+    ),
+  ];
+}
+
+class AppTheme {
+  static final light = ThemeData(
+    fontFamily: 'SF Pro Display',
+    scaffoldBackgroundColor: AppColors.background,
+    appBarTheme: const AppBarTheme(
+      backgroundColor: AppColors.background,
+      elevation: 0,
+      centerTitle: true,
+      titleTextStyle: TextStyle(
+        color: AppColors.primary,
+        fontSize: 18,
+        fontWeight: FontWeight.w600,
+      ),
+      iconTheme: IconThemeData(color: AppColors.primary),
+    ),
+  );
+}
