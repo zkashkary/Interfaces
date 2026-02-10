@@ -1,0 +1,238 @@
+import 'package:flutter/material.dart';
+
+import '../reports_data.dart';
+import '../theme/app_theme.dart';
+import 'report_details_screen.dart';
+
+class ReportsScreen extends StatelessWidget {
+  const ReportsScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        leading: const BackButton(),
+        title: const Text('البلاغات'),
+      ),
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.all(AppSpacing.md),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'إجمالي البلاغات',
+                style: AppText.bodyBold.copyWith(color: AppColors.primary),
+              ),
+              const SizedBox(height: AppSpacing.xs),
+              Text(
+                'تم العثور على ${sampleReports.length} بلاغ',
+                style: AppText.small.copyWith(color: AppColors.textSecondary),
+              ),
+              const SizedBox(height: AppSpacing.md),
+              Expanded(
+                child: ListView.separated(
+                  itemCount: sampleReports.length,
+                  separatorBuilder: (_, __) =>
+                      const SizedBox(height: AppSpacing.sm),
+                  itemBuilder: (context, index) {
+                    final report = sampleReports[index];
+                    return _ReportCard(
+                      report: report,
+                      onTap: () {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (_) =>
+                                ReportDetailsScreen(report: report),
+                          ),
+                        );
+                      },
+                    );
+                  },
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _ReportCard extends StatelessWidget {
+  final MaintenanceReport report;
+  final VoidCallback onTap;
+
+  const _ReportCard({required this.report, required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    final statusStyle = _statusStyle(report.status);
+    return InkWell(
+      borderRadius: BorderRadius.circular(AppRadius.md),
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.all(AppSpacing.md),
+        decoration: BoxDecoration(
+          color: AppColors.white,
+          borderRadius: BorderRadius.circular(AppRadius.md),
+          boxShadow: CardShadow.small,
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Icon(
+                  report.categoryIcon,
+                  color: AppColors.secondary,
+                  size: 18,
+                ),
+                const SizedBox(width: AppSpacing.sm),
+                Expanded(
+                  child: Text(
+                    report.title,
+                    style: AppText.bodyBold.copyWith(color: AppColors.primary),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+                const SizedBox(width: AppSpacing.sm),
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: AppSpacing.sm,
+                    vertical: 4,
+                  ),
+                  decoration: BoxDecoration(
+                    color: statusStyle.background,
+                    borderRadius: BorderRadius.circular(AppRadius.lg),
+                  ),
+                  child: Text(
+                    statusStyle.label,
+                    style: AppText.caption.copyWith(color: statusStyle.text),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: AppSpacing.xs),
+            _IconLine(
+              icon: Icons.apartment,
+              text: report.building,
+            ),
+            const SizedBox(height: AppSpacing.xs),
+            _IconLine(
+              icon: Icons.place_outlined,
+              text: report.location,
+            ),
+            const SizedBox(height: AppSpacing.sm),
+            Divider(
+              height: 1,
+              thickness: 1,
+              color: AppColors.border,
+            ),
+            const SizedBox(height: AppSpacing.sm),
+            Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    report.category,
+                    style: AppText.caption.copyWith(
+                      color: AppColors.secondary,
+                      fontWeight: FontWeight.w600,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+                Text(
+                  _formatDate(report.date),
+                  style:
+                      AppText.caption.copyWith(color: AppColors.textLight),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _IconLine extends StatelessWidget {
+  final IconData icon;
+  final String text;
+
+  const _IconLine({required this.icon, required this.text});
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Icon(icon, size: 12, color: AppColors.textLight),
+        const SizedBox(width: 4),
+        Expanded(
+          child: Text(
+            text,
+            style: AppText.caption.copyWith(color: AppColors.textSecondary),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _StatusStyle {
+  final String label;
+  final Color background;
+  final Color text;
+
+  const _StatusStyle({
+    required this.label,
+    required this.background,
+    required this.text,
+  });
+}
+
+_StatusStyle _statusStyle(ReportStatus status) {
+  switch (status) {
+    case ReportStatus.fixed:
+      return const _StatusStyle(
+        label: 'تم الإصلاح',
+        background: Color(0xFFE7F6EC),
+        text: AppColors.fixed,
+      );
+    case ReportStatus.underProcessing:
+      return const _StatusStyle(
+        label: 'قيد المعالجة',
+        background: Color(0xFFFFF2DB),
+        text: AppColors.processing,
+      );
+  }
+}
+
+String _formatDate(DateTime date) {
+  const months = [
+    'يناير',
+    'فبراير',
+    'مارس',
+    'أبريل',
+    'مايو',
+    'يونيو',
+    'يوليو',
+    'أغسطس',
+    'سبتمبر',
+    'أكتوبر',
+    'نوفمبر',
+    'ديسمبر',
+  ];
+  final month = months[date.month - 1];
+  final day = date.day.toString().padLeft(2, '0');
+  return '$day $month ${date.year}';
+}
