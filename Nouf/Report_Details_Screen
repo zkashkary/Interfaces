@@ -1,0 +1,361 @@
+import 'package:flutter/material.dart';
+
+import '../reports_data.dart';
+import '../theme/app_theme.dart';
+
+class ReportDetailsScreen extends StatelessWidget {
+  final MaintenanceReport report;
+
+  const ReportDetailsScreen({super.key, required this.report});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        leading: const BackButton(),
+        title: const Text('تفاصيل البلاغ'),
+      ),
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.all(AppSpacing.md),
+          child: ListView(
+            children: [
+              _ReportInfoCard(report: report),
+              const SizedBox(height: AppSpacing.md),
+              _SectionCard(
+                title: 'الوصف',
+                child: Text(
+                  report.description,
+                  style: AppText.body.copyWith(color: AppColors.textSecondary),
+                ),
+              ),
+              const SizedBox(height: AppSpacing.md),
+              _AdminActionsCard(status: report.status),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _ReportInfoCard extends StatelessWidget {
+  final MaintenanceReport report;
+
+  const _ReportInfoCard({required this.report});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(AppSpacing.md),
+      decoration: BoxDecoration(
+        color: AppColors.white,
+        borderRadius: BorderRadius.circular(AppRadius.md),
+        boxShadow: CardShadow.small,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'معلومات البلاغ',
+            style: AppText.bodyBold.copyWith(color: AppColors.primary),
+          ),
+          const SizedBox(height: AppSpacing.sm),
+          _InfoRow(label: 'مقدّم البلاغ', value: report.submittedBy),
+          const _InfoDivider(),
+          _InfoRow(label: 'التاريخ', value: _formatDateTime(report.date)),
+          const _InfoDivider(),
+          _InfoRow(label: 'العنوان', value: report.title),
+          const _InfoDivider(),
+          _InfoRow(
+            label: 'الفئة',
+            value: report.category,
+            chipIcon: report.categoryIcon,
+          ),
+          const _InfoDivider(),
+          _InfoRow(label: 'الحرم', value: report.campus),
+          const _InfoDivider(),
+          _InfoRow(label: 'المبنى', value: report.building),
+          const _InfoDivider(),
+          _InfoRow(label: 'الموقع', value: report.location),
+        ],
+      ),
+    );
+  }
+}
+
+class _InfoRow extends StatelessWidget {
+  final String label;
+  final String value;
+  final IconData? chipIcon;
+
+  const _InfoRow({required this.label, required this.value, this.chipIcon});
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 6),
+      child: Row(
+        children: [
+          Expanded(
+            child: Text(
+              label,
+              style: AppText.caption.copyWith(color: AppColors.textLight),
+            ),
+          ),
+          if (chipIcon != null)
+            Container(
+              padding: const EdgeInsets.symmetric(
+                horizontal: AppSpacing.sm,
+                vertical: 4,
+              ),
+              decoration: BoxDecoration(
+                color: AppColors.background,
+                borderRadius: BorderRadius.circular(AppRadius.round),
+                border: Border.all(color: AppColors.border),
+              ),
+              child: Row(
+                children: [
+                  Icon(chipIcon, size: 14, color: AppColors.secondary),
+                  const SizedBox(width: 4),
+                  Text(
+                    value,
+                    style: AppText.caption.copyWith(color: AppColors.primary),
+                  ),
+                ],
+              ),
+            )
+          else
+            Text(
+              value,
+              style: AppText.caption.copyWith(
+                color: AppColors.textPrimary,
+                fontWeight: FontWeight.w600,
+              ),
+              textAlign: TextAlign.start,
+            ),
+        ],
+      ),
+    );
+  }
+}
+
+class _InfoDivider extends StatelessWidget {
+  const _InfoDivider();
+
+  @override
+  Widget build(BuildContext context) {
+    return const Divider(height: 1, color: AppColors.border);
+  }
+}
+
+class _SectionCard extends StatelessWidget {
+  final String title;
+  final Widget child;
+
+  const _SectionCard({required this.title, required this.child});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(AppSpacing.md),
+      decoration: BoxDecoration(
+        color: AppColors.white,
+        borderRadius: BorderRadius.circular(AppRadius.md),
+        boxShadow: CardShadow.small,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            title,
+            style: AppText.bodyBold.copyWith(color: AppColors.primary),
+          ),
+          const SizedBox(height: AppSpacing.sm),
+          child,
+        ],
+      ),
+    );
+  }
+}
+
+class _AdminActionsCard extends StatelessWidget {
+  final ReportStatus status;
+
+  const _AdminActionsCard({required this.status});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(AppSpacing.md),
+      decoration: BoxDecoration(
+        color: AppColors.background,
+        borderRadius: BorderRadius.circular(AppRadius.md),
+        boxShadow: CardShadow.small,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'إجراءات الإدارة',
+            style: AppText.bodyBold.copyWith(color: AppColors.primary),
+          ),
+          const SizedBox(height: AppSpacing.sm),
+          const Text('الحالة', style: AppText.bodyBold),
+          const SizedBox(height: AppSpacing.sm),
+          Row(
+            children: [
+              Expanded(
+                child: _StatusButton(
+                  text: 'قيد المعالجة',
+                  isActive: status == ReportStatus.underProcessing,
+                ),
+              ),
+              const SizedBox(width: AppSpacing.sm),
+              Expanded(
+                child: _StatusButton(
+                  text: 'تم الإصلاح',
+                  isActive: status == ReportStatus.fixed,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: AppSpacing.md),
+          const Text('ملاحظات للمستخدم', style: AppText.bodyBold),
+          const SizedBox(height: AppSpacing.sm),
+          TextField(
+            minLines: 3,
+            maxLines: 4,
+            decoration: InputDecoration(
+              hintText: 'أضف ملاحظات أو تحديثات للمستخدم',
+              hintStyle: AppText.small.copyWith(color: AppColors.textLight),
+              filled: true,
+              fillColor: AppColors.white,
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(AppRadius.sm),
+                borderSide: const BorderSide(color: AppColors.border),
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(AppRadius.sm),
+                borderSide: const BorderSide(color: AppColors.border),
+              ),
+            ),
+          ),
+          const SizedBox(height: AppSpacing.md),
+          _PrimaryButton(text: 'حفظ التغييرات', onTap: () {}),
+          const SizedBox(height: AppSpacing.sm),
+          _SecondaryButton(text: 'إرسال فريق الصيانة', onTap: () {}),
+        ],
+      ),
+    );
+  }
+}
+
+String _formatDateTime(DateTime date) {
+  const months = [
+    'يناير',
+    'فبراير',
+    'مارس',
+    'أبريل',
+    'مايو',
+    'يونيو',
+    'يوليو',
+    'أغسطس',
+    'سبتمبر',
+    'أكتوبر',
+    'نوفمبر',
+    'ديسمبر',
+  ];
+  final hour = date.hour % 12 == 0 ? 12 : date.hour % 12;
+  final minute = date.minute.toString().padLeft(2, '0');
+  final period = date.hour >= 12 ? 'م' : 'ص';
+  final month = months[date.month - 1];
+  return '${date.day} $month ${date.year}، $hour:$minute $period';
+}
+
+class _StatusButton extends StatelessWidget {
+  final String text;
+  final bool isActive;
+
+  const _StatusButton({required this.text, required this.isActive});
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      height: 40,
+      child: ElevatedButton(
+        style: ElevatedButton.styleFrom(
+          elevation: 0,
+          backgroundColor: isActive ? AppColors.primary : AppColors.white,
+          foregroundColor: isActive ? AppColors.white : AppColors.primary,
+          side: const BorderSide(color: AppColors.primary),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(AppRadius.sm),
+          ),
+        ),
+        onPressed: () {},
+        child: Text(
+          text,
+          style: AppText.small.copyWith(fontWeight: FontWeight.w600),
+          textAlign: TextAlign.center,
+        ),
+      ),
+    );
+  }
+}
+
+class _PrimaryButton extends StatelessWidget {
+  final String text;
+  final VoidCallback onTap;
+
+  const _PrimaryButton({required this.text, required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: double.infinity,
+      child: ElevatedButton(
+        style: ElevatedButton.styleFrom(
+          backgroundColor: AppColors.primary,
+          foregroundColor: AppColors.white,
+          padding: const EdgeInsets.symmetric(vertical: 14),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(AppRadius.sm),
+          ),
+        ),
+        onPressed: onTap,
+        child: Text(text, style: AppText.bodyBold),
+      ),
+    );
+  }
+}
+
+class _SecondaryButton extends StatelessWidget {
+  final String text;
+  final VoidCallback onTap;
+
+  const _SecondaryButton({required this.text, required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: double.infinity,
+      child: OutlinedButton(
+        style: OutlinedButton.styleFrom(
+          foregroundColor: AppColors.white,
+          backgroundColor: AppColors.secondary,
+          side: const BorderSide(color: AppColors.secondary),
+          padding: const EdgeInsets.symmetric(vertical: 14),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(AppRadius.sm),
+          ),
+        ),
+        onPressed: onTap,
+        child: Text(
+          text,
+          style: AppText.bodyBold.copyWith(color: AppColors.white),
+        ),
+      ),
+    );
+  }
+}
